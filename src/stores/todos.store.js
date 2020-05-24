@@ -13,7 +13,7 @@ function createStore() {
 
   const getTodos = (params = {}) => {
     update((p) => ({ ...p, isLoading: true }))
-    return Api.getTodos('/api/todos', params)
+    return Api.getTodos(params)
       .then((todos) => {
         console.log(todos)
         update((p) => ({ ...p, todos, isLoaded: true }))
@@ -25,35 +25,35 @@ function createStore() {
 
   const getTodo = (id) => {
     update((p) => ({ ...p, isLoading: true }))
-    return Api.getTodo(`/api/todos/${id}`).finally(() => {
+    return Api.getTodo(id).finally(() => {
       update((p) => ({ ...p, isLoading: false }))
     })
   }
 
   const createTodo = (params = {}) => {
     update((p) => ({ ...p, isLoading: true }))
-    return Api.createTodo('/api/todos', params).finally(() => {
+    return Api.createTodo(params).finally(() => {
       update((p) => ({ ...p, isLoading: false }))
     })
   }
 
   const putTodo = (id, params = {}) => {
     update((p) => ({ ...p, isLoading: true }))
-    return Api.putTodo(`/api/todos/${id}`, params).finally(() => {
+    return Api.putTodo(id, params).finally(() => {
       update((p) => ({ ...p, isLoading: false }))
     })
   }
 
   const patchTodo = (id, params = {}) => {
     update((p) => ({ ...p, isLoading: true }))
-    return Api.patchTodo(`/api/todos/${id}`, params).finally(() => {
+    return Api.patchTodo(id, params).finally(() => {
       update((p) => ({ ...p, isLoading: false }))
     })
   }
 
   const deleteTodo = (id) => {
     update((p) => ({ ...p, isLoading: true }))
-    return Api.deleteTodo(`/api/todos/${id}`).finally(() => {
+    return Api.deleteTodo(id).finally(() => {
       update((p) => ({ ...p, isLoading: false }))
     })
   }
@@ -65,6 +65,7 @@ function createStore() {
     putTodo,
     patchTodo,
     deleteTodo,
+    subscribe,
   }
 }
 

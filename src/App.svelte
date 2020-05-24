@@ -5,20 +5,15 @@
 
   import store from "./stores/todos.store.js";
 
-  onMount(() => {
-    console.log(1111);
-    store.getTodos();
-  });
+  onMount(load);
 
   let editingId = null;
 
-  let todo;
+  let todo = "";
 
-  let todos = [];
-
-  $: console.log(store.todos);
-
-  $: console.log(todos);
+  function load() {
+    store.getTodos();
+  }
 
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -28,24 +23,15 @@
     }
 
     if (editingId) {
-      todos = todos.map(t => {
-        if (t.id === editingId) {
-          return {
-            ...t,
-            title: todo
-          };
-        } else {
-          return t;
-        }
-      });
+      store
+        .patchTodo(editingId, { title: todo })
+        .then(load)
+        .catch(console.log);
     } else {
-      todos = todos.concat([
-        {
-          id: uuid(),
-          title: todo,
-          isDone: false
-        }
-      ]);
+      store
+        .createTodo({ title: todo, isDone: false })
+        .then(load)
+        .catch(console.log);
     }
 
     todo = "";
@@ -54,16 +40,10 @@
 
   function toggleStatus(id, status) {
     return () => {
-      todos = todos.map(t => {
-        if (t.id === id) {
-          return {
-            ...t,
-            isDone: !status
-          };
-        } else {
-          return t;
-        }
-      });
+      store
+        .patchTodo(id, { isDone: !status })
+        .then(load)
+        .catch(console.log);
     };
   }
 
@@ -71,7 +51,10 @@
     return () => {
       const c = window.confirm("Are you sure you wanna delete this item?");
       if (c) {
-        todos = todos.filter(t => t.id !== id);
+        store
+          .deleteTodo(id)
+          .then(load)
+          .catch(console.log);
       }
     };
   }
@@ -101,9 +84,10 @@
             class="form-control"
             placeholder="Add title"
             on:blur={handleBlur}
+            disabled={$store.isLoading}
             bind:value={todo} />
         </div>
-        <button class="btn btn-block btn-primary">
+        <button disabled={$store.isLoading} class="btn btn-block btn-primary">
           {editingId ? 'Update Todo' : 'Add Todo'}
         </button>
       </form>
@@ -114,7 +98,7 @@
     <div class="card-body">
       <table class="table table-hovered">
         <tbody>
-          {#each todos as t}
+          {#each $store.todos as t}
             <tr>
               <td>
                 <input

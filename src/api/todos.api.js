@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 axios.defaults.baseURL = 'http://a6ef48a6.ngrok.io'
+axios.defaults.headers.common['Content-Type'] = 'application/json'
 
 const getTodos = () => {
   return axios.get('/api/todos').then((response) => response.data)
