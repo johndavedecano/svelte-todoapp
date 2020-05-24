@@ -1,11 +1,22 @@
 <script>
+  import { onMount } from "svelte";
+
   import { v4 as uuid } from "uuid";
+
+  import store from "./stores/todos.store.js";
+
+  onMount(() => {
+    console.log(1111);
+    store.getTodos();
+  });
 
   let editingId = null;
 
   let todo;
 
   let todos = [];
+
+  $: console.log(store.todos);
 
   $: console.log(todos);
 
